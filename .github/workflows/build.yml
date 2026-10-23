@@ -1,0 +1,24 @@
+name: Build Menace Audio
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64
+      - name: Build
+        run: cmake --build build --config Release
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+      - name: Make installer
+        run: '& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer.iss'
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: MenaceAudio-Setup
+          path: Output/MenaceAudio-Setup.exe
